@@ -1,0 +1,50 @@
+﻿@page "/fetchdata"
+@inject HttpClient Http
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (data == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Country</th>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Start Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var comp in data.Competitions)
+            {
+                <tr>
+                    <td>@comp.Id</td>
+                    <td>@comp.Area.Name</td>
+                    <td>@comp.Name</td>
+                    <td>@comp.Code</td>
+                    <td>@comp.CurrentSeason</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@functions {
+    FootballData data;
+
+    protected override async Task OnInitAsync()
+    {
+        Http.DefaultRequestHeaders.Add("X-Auth-Token", "");
+        var response = await Http.GetStringAsync("http://api.football-data.org/v2/competitions");
+        data = FootballData.FromJson(response);
+        
+        //api = await FootballDataService.GetData();
+    }
+}
